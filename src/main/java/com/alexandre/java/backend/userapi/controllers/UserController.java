@@ -1,81 +1,62 @@
 package com.alexandre.java.backend.userapi.controllers;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alexandre.java.backend.userapi.dto.UserDTO;
+import com.alexandre.java.backend.userapi.services.UserService;
 
-import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/user")
+@RequiredArgsConstructor
 public class UserController {
 
-	public static List<UserDTO> users = new ArrayList<UserDTO>();
-
-	@PostConstruct
-	public void initiateList() {
-		UserDTO userDTO = new UserDTO();
-		userDTO.setName("Alexandre");
-		userDTO.setCpf("00000000000");
-		userDTO.setAddress("Rua, Bairro, Cidade, Estado, Pais, CEP");
-		userDTO.setEmail("meuEmail@email.com");
-		userDTO.setPhone("(99) 99999-9999");
-		userDTO.setCreateDate(LocalDateTime.now());
-
-		UserDTO userDTO2 = new UserDTO();
-		userDTO2.setName("Alexandre2");
-		userDTO2.setCpf("00000000001");
-		userDTO2.setAddress("Rua, Bairro, Cidade, Estado, Pais, CEP");
-		userDTO2.setEmail("meuEmail@email.com");
-		userDTO2.setPhone("(99) 99999-9999");
-		userDTO2.setCreateDate(LocalDateTime.now());
-
-		UserDTO userDTO3 = new UserDTO();
-		userDTO3.setName("Alexandre3");
-		userDTO3.setCpf("00000000002");
-		userDTO3.setAddress("Rua, Bairro, Cidade, Estado, Pais, CEP");
-		userDTO3.setEmail("meuEmail@email.com");
-		userDTO3.setPhone("(99) 99999-9999");
-		userDTO3.setCreateDate(LocalDateTime.now());
-
-		users.add(userDTO);
-		users.add(userDTO2);
-		users.add(userDTO3);
-	}
+	private final UserService userService;
 
 	@GetMapping
 	public List<UserDTO> getUsers() {
-		return users;
+		return userService.getAll();
 	}
 
-	@GetMapping("/{cpf}")
+	@GetMapping("/{id}")
+	public UserDTO getUserByCpf(@PathVariable Long id) {
+		return userService.findById(id);
+	}
+
+	@GetMapping("/{cpf}/cpf")
 	public UserDTO getUserByCpf(@PathVariable String cpf) {
-		return users.stream()
-				.filter(userDTO -> userDTO.getCpf().equals(cpf))
-				.findFirst()
-				.orElseThrow(() -> new RuntimeException("User not found."));
+		return userService.findByCpf(cpf);
 	}
 
 	@PostMapping
+	@ResponseStatus(HttpStatus.CREATED)
 	public UserDTO createUser(@Valid @RequestBody UserDTO userDTO) {
-		userDTO.setCreateDate(LocalDateTime.now());
-		users.add(userDTO);
-		return userDTO;
+		return userService.save(userDTO);
 	}
 	
-	@DeleteMapping("/{cpf}")
-	public boolean deleteUser(@PathVariable String cpf) {
-		return users.removeIf(userDto -> userDto.getCpf().equals(cpf));
+	@DeleteMapping("/{id}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void deleteUser(@PathVariable Long id) throws UserPrincipalNotFoundException {
+		userService.delete(id);
 	}
+
+	@GetMapping("/search")
+	public List<UserDTO> queryByName(@RequestParam(name="name", required = true) String name) {
+		return userService.queryByName(name);
+	}
+
 }
