@@ -22,11 +22,13 @@ public class User {
     @Id
     @GeneratedValue
     private long id;
+
     private String name;
     private String cpf;
     private String address;
     private String email;
     private String phone;
+    
     @Column(name="create_date")
     private LocalDateTime createDate;
 

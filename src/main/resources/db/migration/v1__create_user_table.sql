@@ -1,7 +1,7 @@
-CREATE SCHEMA IF NOT EXISTS users;
+CREATE SCHEMA IF NOT EXISTS dev;
 
-CREATE TABLE users.user (
-    id bigserial primary key,
+CREATE TABLE dev.user (
+    id bigint primary key,
     name varchar(100) not null,
     cpf varchar(100) not null,
     address varchar(100) not null,

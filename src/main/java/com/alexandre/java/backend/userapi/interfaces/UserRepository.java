@@ -13,5 +13,5 @@ import com.alexandre.java.backend.userapi.entitites.User;
 public interface UserRepository extends JpaRepository<User, Long> {
     User findByCpf(String cpf);
     List<User> queryByNameLike(String name);
-    Page<User> findAll(Pageable page);
+    // Page<User> findAll(Pageable page);
 }

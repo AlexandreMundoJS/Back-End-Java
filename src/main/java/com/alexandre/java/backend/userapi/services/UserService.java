@@ -2,7 +2,6 @@ package com.alexandre.java.backend.userapi.services;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
@@ -70,8 +69,8 @@ public class UserService {
         return UserDTO.convert(user);
     }
 
-    public Page<UserDTO> getAllPages(Pageable page) {
-        Page<User> users = userRepository.findAll(page);
-        return users.map(UserDTO::convert);
-    }
+    // public Page<UserDTO> getAllPages(Pageable page) {
+    //     Page<User> users = userRepository.findAll(page);
+    //     return users.map(UserDTO::convert);
+    // }
 }
